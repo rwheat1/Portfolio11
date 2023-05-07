@@ -30,17 +30,49 @@ Background: I'm going to continue my work from my previous portfolio. That is, I
 
 #wide to long 
 
-moral_anova_data <- main_data %>%
+mc_anova_data <- main_data %>%
   select(1, 14, 16, 18) %>%
   filter(!is.na(child_moral_v_comp) & !is.na(coworker_moral_v_comp) & !is.na(friend_moral_v_comp)) %>%
   pivot_longer(!ID, names_to = "Target", values_to = "Moral_Choices")
 
 #run ANOVA
 
-target_competence <- aov(Moral_Choices ~ Target + Error(ID), data = moral_anova_data)
+target_competence <- aov(Moral_Choices ~ Target + Error(ID), data = mc_anova_data)
 
 summary(target_competence)
 
 ```
 
 It seems that there is a difference between the ideal friends, coworkers, and children in the extent to which people prefer them to have moral trait over competence traits. Lets see if this is also true for moral vs. sociable traits.
+
+```{r coworker soc v moral comparison}
+
+#wide to long
+
+ms_anova_data <- main_data %>%
+  select(1, 15, 17, 19) %>%
+  filter(!is.na(child_moral_v_soc) & !is.na(coworker_moral_v_soc) & !is.na(friend_moral_v_soc)) %>%
+  pivot_longer(!ID, names_to = "Target", values_to = "Moral_Choices")
+
+#run ANOVA
+
+target_sociab <- aov(Moral_Choices ~ Target + Error(ID), data = ms_anova_data)
+
+summary(target_sociab)
+
+```
+
+Interesting. I wasn't necessarily expecting people to pick moral traits over sociable traits to a different extent for the ideal friend, coworker, or child.
+
+Let's run some follow up tests to see what might be going on here. First, I'll make a difference score between moral vs. competence and moral vs. sociable for each target (positive scores = people preferred moral traits over competence traits MORE OFTEN than moral traits over sociable traits). Then, I'll run some t-tests to see which of these are different from each other.
+
+```{r new variable}
+
+main_data <- main_data %>%
+  mutate(mc_child_diff = child_moral_v_comp - child_moral_v_soc) %>%
+  mutate(mc_coworker_diff = coworker_moral_v_comp - coworker_moral_v_soc) %>%
+  mutate(mc_friend_diff = friend_moral_v_comp = friend_moral_v_soc)
+
+```
+
+
