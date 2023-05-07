@@ -1,0 +1,18 @@
+---
+title: "Portfolio 11 -- Recreating a Bar Plot"
+author: "Ryan Wheat"
+date: "05/07/2023"
+output: github_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load-packages, include = FALSE}
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+library(haven)
+library(gt)
+```
