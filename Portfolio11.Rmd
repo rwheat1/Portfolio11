@@ -16,3 +16,31 @@ library(dplyr)
 library(haven)
 library(gt)
 ```
+
+
+```{r load-data, include = FALSE}
+
+main_data <- read_rds("C://Users/12107/OneDrive/Documents/GitHub/Portfolios 2023/Portfolio9/Lens Of Virtue.RDS")
+
+```
+
+Background: I'm going to continue my work from my previous portfolio. That is, I'm going to see whether competence over moral traits more for coworkers than for others.
+
+```{r coworker competence vs. morality comaprison}
+
+#wide to long 
+
+moral_anova_data <- main_data %>%
+  select(1, 14, 16, 18) %>%
+  filter(!is.na(child_moral_v_comp) & !is.na(coworker_moral_v_comp) & !is.na(friend_moral_v_comp)) %>%
+  pivot_longer(!ID, names_to = "Target", values_to = "Moral_Choices")
+
+#run ANOVA
+
+target_competence <- aov(Moral_Choices ~ Target + Error(ID), data = moral_anova_data)
+
+summary(target_competence)
+
+```
+
+It seems that there is a difference between the ideal friends, coworkers, and children in the extent to which people prefer them to have moral trait over competence traits. Lets see if this is also true for moral vs. sociable traits.
