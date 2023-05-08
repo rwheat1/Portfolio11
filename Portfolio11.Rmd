@@ -207,6 +207,46 @@ main_data_long <- main_data %>%
 
 ```{r visualize}
 
+#moral vs. competence for each target
+
+main_data_long %>%
+  filter(Target_Trait == "friend_moral_v_comp" |
+         Target_Trait == "coworker_moral_v_comp" |
+         Target_Trait == "child_moral_v_comp") %>%
+  ggplot(aes(x = ggplot_name, y = Number_Chosen, fill = ggplot_name)) +
+  geom_violin(na.rm = TRUE) +
+  geom_jitter(na.rm = TRUE,
+              width = .1) +
+  stat_summary(fun = "mean",
+               geom = "crossbar",
+               na.rm = TRUE) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  labs(title = "Moral vs. Competence Trait Selection",
+       x = "Target",
+       y = "Number of Moral Traits Chosen (over Competence)",
+       fill = NULL) +
+   scale_fill_manual(labels = NULL, values = c("steelblue1", "steelblue4", "gray80"))
+
+#moral vs. sociability for each target
+
+main_data_long %>%
+  filter(Target_Trait == "friend_moral_v_soc" |
+         Target_Trait == "coworker_moral_v_soc" |
+         Target_Trait == "child_moral_v_soc") %>%
+  ggplot(aes(x = ggplot_name, y = Number_Chosen, fill = ggplot_name)) +
+  geom_violin(na.rm = TRUE) +
+  geom_jitter(na.rm = TRUE,
+              width = .1) +
+  stat_summary(fun = "mean",
+               geom = "crossbar",
+               na.rm = TRUE) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  labs(title = "Moral vs. Sociable Trait Selection",
+       x = "Target",
+       y = "Number of Moral Traits Chosen (over Sociability)") +
+   scale_fill_manual(values = c("steelblue1", "steelblue4", "gray80"))
 
 
 ```
