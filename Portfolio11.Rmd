@@ -1,5 +1,5 @@
 ---
-title: "Portfolio 11 -- Recreating a Bar Plot"
+title: "Portfolio 11 -- More Moral Character!"
 author: "Ryan Wheat"
 date: "05/07/2023"
 output: github_document
@@ -228,6 +228,8 @@ main_data_long %>%
        fill = NULL) +
    scale_fill_manual(labels = NULL, values = c("steelblue1", "steelblue4", "gray80"))
 
+ggsave("Morality_v_Competence.png", plot = last_plot())
+
 #moral vs. sociability for each target
 
 main_data_long %>%
@@ -248,7 +250,7 @@ main_data_long %>%
        y = "Number of Moral Traits Chosen (over Sociability)") +
    scale_fill_manual(values = c("steelblue1", "steelblue4", "gray80"))
 
-
+ggsave("Morality_v_Sociability.png", plot = last_plot())
 ```
 
 ### Are There Individual Differences in the Extent to Which Participants Preferred Certain Traits in their Ideal Targets?
