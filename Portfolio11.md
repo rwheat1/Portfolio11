@@ -1,4 +1,4 @@
-Portfolio 11 – Recreating a Bar Plot
+Portfolio 11 – More Moral Character!
 ================
 Ryan Wheat
 05/07/2023
@@ -278,8 +278,69 @@ they are choosing sociable traits over moral traits more often for
 coworkers.
 
 I was going to do more on this topic, but I actually think these results
-answer this question pretty soundly. Let’s move on to a different
-question.
+answer this question pretty soundly. Let’s plot these relatinoships, and
+then move on to a different question.
+
+``` r
+#moral vs. competence for each target
+
+main_data_long %>%
+  filter(Target_Trait == "friend_moral_v_comp" |
+         Target_Trait == "coworker_moral_v_comp" |
+         Target_Trait == "child_moral_v_comp") %>%
+  ggplot(aes(x = ggplot_name, y = Number_Chosen, fill = ggplot_name)) +
+  geom_violin(na.rm = TRUE) +
+  geom_jitter(na.rm = TRUE,
+              width = .1) +
+  stat_summary(fun = "mean",
+               geom = "crossbar",
+               na.rm = TRUE) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  labs(title = "Moral vs. Competence Trait Selection",
+       x = "Target",
+       y = "Number of Moral Traits Chosen (over Competence)",
+       fill = NULL) +
+   scale_fill_manual(labels = NULL, values = c("steelblue1", "steelblue4", "gray80"))
+```
+
+![](Portfolio11_files/figure-gfm/visualize-1.png)<!-- -->
+
+``` r
+ggsave("Morality_v_Competence.png", plot = last_plot())
+```
+
+    ## Saving 7 x 5 in image
+
+``` r
+#moral vs. sociability for each target
+
+main_data_long %>%
+  filter(Target_Trait == "friend_moral_v_soc" |
+         Target_Trait == "coworker_moral_v_soc" |
+         Target_Trait == "child_moral_v_soc") %>%
+  ggplot(aes(x = ggplot_name, y = Number_Chosen, fill = ggplot_name)) +
+  geom_violin(na.rm = TRUE) +
+  geom_jitter(na.rm = TRUE,
+              width = .1) +
+  stat_summary(fun = "mean",
+               geom = "crossbar",
+               na.rm = TRUE) +
+  theme_bw() +
+  theme(legend.position = "none") +
+  labs(title = "Moral vs. Sociable Trait Selection",
+       x = "Target",
+       y = "Number of Moral Traits Chosen (over Sociability)") +
+   scale_fill_manual(values = c("steelblue1", "steelblue4", "gray80"))
+```
+
+![](Portfolio11_files/figure-gfm/visualize-2.png)<!-- -->
+
+``` r
+ggsave("Morality_v_Sociability.png", plot = last_plot())
+```
+
+    ## Saving 7 x 5 in image
 
 ### Are There Individual Differences in the Extent to Which Participants Preferred Certain Traits in their Ideal Targets?
 
@@ -311,16 +372,16 @@ sociability_corr <- cor(main_data[8:10],
 #all together
 
 alltraits_corr <- cor(main_data[2:10],
-                      us = "complete.obs")
+                      use = "complete.obs")
 
 #plot
 
-ggcorrplot(alltraits_corr,
+ggcorrplot(moral_corr,
            method = "circle",
-           type = "lower",
-           lab= TRUE,
+           type = "full",
+           lab = TRUE,
            insig = "blank",
-           colors = c("navyblue", "white", "maroon"),
+           colors = c("navyblue", "white", "chartreuse4"),
            outline.color = "white",
            ggtheme = ggplot2::theme_bw)
 ```
@@ -328,16 +389,31 @@ ggcorrplot(alltraits_corr,
 ![](Portfolio11_files/figure-gfm/overall-morality-correlations-1.png)<!-- -->
 
 ``` r
-ggcorrplot(moral_corr,
+ggcorrplot(competence_corr,
            method = "circle",
-           type = "lower",
+           type = "full",
            lab = TRUE,
            insig = "blank",
-           colors = c("navyblue", "white", "maroon"),
+           colors = c("navyblue", "white", "chartreuse4"),
            outline.color = "white",
            ggtheme = ggplot2::theme_bw)
 ```
 
 ![](Portfolio11_files/figure-gfm/overall-morality-correlations-2.png)<!-- -->
 
-It seems like everything is correlated with everything.
+``` r
+ggcorrplot(sociability_corr,
+           method = "circle",
+           type = "full",
+           lab = TRUE,
+           insig = "blank",
+           colors = c("navyblue", "white", "chartreuse4"),
+           outline.color = "white",
+           ggtheme = ggplot2::theme_bw)
+```
+
+![](Portfolio11_files/figure-gfm/overall-morality-correlations-3.png)<!-- -->
+
+It does seem like there are reliable individual differences in
+selections of each trait between targets here, but the effect sizes do
+seem to be larger for morality than for the other traits.
