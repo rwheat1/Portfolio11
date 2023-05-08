@@ -16,6 +16,7 @@ library(dplyr)
 library(haven)
 library(gt)
 library(psych)
+library(ggcorrplot)
 ```
 
 ```{r load-data, include = FALSE}
@@ -168,16 +169,105 @@ Participants chose sociable traits over moral traits ***less*** often for cowork
 
 Broadly speaking, these results explain findings from my past portfolio showing that people generally preferred moral traits more in friends and children than they did in coworkers. That is, this effect is due to people choosing competence traits over moral traits more often for their ideal coworker than for their ideal friend or child -- and NOT because they are choosing sociable traits over moral traits more often for coworkers.
 
-I was going to do more on this topic, but I actually think these results answer this question pretty soundly. Let's move on to a different question.
+I was going to do more on this topic, but I actually think these results answer this question pretty soundly. Let's plot these relatinoships, and then move on to a different question.
 
-### Are There Individual Differences in the Extent to Which Participants Preferred Moral Traits in their Ideal Targets?
+```{r transpose, include = FALSE}
 
-To answer this question, I am going to run some correlations to see whether people who preferred moral traits for some targets tended to prefer them for other targets. 
+#wide to long
+
+main_data_long <- main_data %>%
+  pivot_longer(!ID, names_to = "Target_Trait", values_to = "Number_Chosen") %>%
+  mutate(ggplot_name = case_when(Target_Trait == "friend_morality" ~ "Friend",
+                                 Target_Trait == "coworker_morality" ~ "Coworker",
+                                 Target_Trait == "child_morality" ~ "Child",
+                                 Target_Trait == "friend_competence" ~ "Friend",
+                                 Target_Trait == "coworker_competence" ~ "Coworker",
+                                 Target_Trait == "child_competence" ~ "Child",
+                                 Target_Trait == "friend_sociability" ~ "Friend",
+                                 Target_Trait == "coworker_sociability" ~ "Coworker",
+                                 Target_Trait == "child_sociability" ~ "Child",
+                                 Target_Trait == "friend_nonmoral" ~ "Friend",
+                                 Target_Trait == "coworker_nonmoral" ~ "Coworker",
+                                 Target_Trait == "child_nonmoral" ~ "Child",
+                                 Target_Trait == "total_moral_traits" ~ "Moral Traits",
+                                 Target_Trait == "total_comp_traits" ~ "Competence Traits", 
+                                 Target_Trait == "total_sociab_traits" ~ "Sociable Traits", 
+                                 Target_Trait == "total_nonmoral_traits" ~ "Nonmoral Traits",
+                                 Target_Trait == "total_moral_v_comp" ~ "Moral Traits",
+                                 Target_Trait == "total_comp_v_moral" ~ "Competence Traits",
+                                 Target_Trait == "total_moral_v_soc" ~ "Moral Traits",
+                                 Target_Trait == "total_soc_v_moral" ~ "Sociable Traits",
+                                 Target_Trait == "child_moral_v_comp" ~ "Child",
+                                 Target_Trait == "child_moral_v_soc" ~ "Child",
+                                 Target_Trait == "coworker_moral_v_comp" ~ "Coworker",
+                                 Target_Trait == "coworker_moral_v_soc" ~ "Coworker",
+                                 Target_Trait == "friend_moral_v_comp" ~ "Friend",
+                                 Target_Trait == "friend_moral_v_soc" ~ "Friend"))
+```
+
+```{r visualize}
+
+
+
+```
+
+### Are There Individual Differences in the Extent to Which Participants Preferred Certain Traits in their Ideal Targets?
+
+To answer this question, I am going to run some correlations to see whether people who preferred moral traits, competence traits, and sociability traits for some targets tended to prefer them for other targets. 
 
 I would like to run latent profile analysis to see whether there are profiles of responses that go together, but I don't know how to do that and don't have time to learn. So correlations will have to do.
 
 ```{r overall-morality-correlations}
 
+#morality traits
 
+moral_corr <- cor(main_data[2:4],
+    use = "complete.obs")
+
+#competence traits
+
+competence_corr <- cor(main_data[5:7],
+    use = "complete.obs")
+
+#sociability traits
+
+sociability_corr <- cor(main_data[8:10],
+    use = "complete.obs")
+
+#all together
+
+alltraits_corr <- cor(main_data[2:10],
+                      use = "complete.obs")
+
+#plot
+
+ggcorrplot(moral_corr,
+           method = "circle",
+           type = "full",
+           lab = TRUE,
+           insig = "blank",
+           colors = c("navyblue", "white", "chartreuse4"),
+           outline.color = "white",
+           ggtheme = ggplot2::theme_bw)
+
+ggcorrplot(competence_corr,
+           method = "circle",
+           type = "full",
+           lab = TRUE,
+           insig = "blank",
+           colors = c("navyblue", "white", "chartreuse4"),
+           outline.color = "white",
+           ggtheme = ggplot2::theme_bw)
+
+ggcorrplot(sociability_corr,
+           method = "circle",
+           type = "full",
+           lab = TRUE,
+           insig = "blank",
+           colors = c("navyblue", "white", "chartreuse4"),
+           outline.color = "white",
+           ggtheme = ggplot2::theme_bw)
 
 ```
+
+It does seem like there are reliable individual differences in selections of each trait between targets here, but the effect sizes do seem to be larger for morality than for the other traits. 
