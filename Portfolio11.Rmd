@@ -15,8 +15,8 @@ library(tidyverse)
 library(dplyr)
 library(haven)
 library(gt)
+library(psych)
 ```
-
 
 ```{r load-data, include = FALSE}
 
@@ -24,7 +24,11 @@ main_data <- read_rds("C://Users/12107/OneDrive/Documents/GitHub/Portfolios 2023
 
 ```
 
-Background: I'm going to continue my work from my previous portfolio. That is, I'm going to see whether competence over moral traits more for coworkers than for others.
+## Background
+
+I'm going to continue my work from my previous portfolio. That is, I'm going to see whether participants select competence over moral traits more for coworkers than for others.
+
+### To What Degree Are Moral Traits Chosen Over Competence and Sociability Traits for Friends, Coworkers, and Children?
 
 ```{r coworker competence vs. morality comaprison}
 
@@ -62,17 +66,118 @@ summary(target_sociab)
 
 ```
 
-Interesting. I wasn't necessarily expecting people to pick moral traits over sociable traits to a different extent for the ideal friend, coworker, or child.
+Interesting. I wasn't necessarily expecting people to pick moral traits over sociable traits to a different extent for the ideal friend, coworker, or child. If people are choosing sociable traits over moral traits more frequently for coworkers than children/friends, that could also explain the results I found in Portfolio 9.
 
-Let's run some follow up tests to see what might be going on here. First, I'll make a difference score between moral vs. competence and moral vs. sociable for each target (positive scores = people preferred moral traits over competence traits MORE OFTEN than moral traits over sociable traits). Then, I'll run some t-tests to see which of these are different from each other.
+### Post-Hoc Tests
 
-```{r new variable}
+Let's run some follow up tests to see what might be going on here. First, I'll compare the number of times someone picked a moral trait over a competence trait for coworkers vs. friends, and coworkers vs. children. I'll do the same with moral vs. sociability traits in order to see which of these -- or if both -- are responsible for previous findings.
 
-main_data <- main_data %>%
-  mutate(mc_child_diff = child_moral_v_comp - child_moral_v_soc) %>%
-  mutate(mc_coworker_diff = coworker_moral_v_comp - coworker_moral_v_soc) %>%
-  mutate(mc_friend_diff = friend_moral_v_comp = friend_moral_v_soc)
+#### Comparing Coworkers to Friends and Children
+
+```{r moral-v-competence-ttests}
+
+#choosing coworker v child in the data
+
+comparison1_data <- mc_anova_data %>%
+  filter(Target != "friend_moral_v_comp")
+
+#running test
+
+coworker_v_child_c <- t.test(Moral_Choices ~ Target,
+                      alternative = "two.sided",
+                      paired = TRUE,
+                      data = comparison1_data)
+
+coworker_v_child_c
+
+#mean check
+
+comparison1_data %>%
+  group_by(Target) %>%
+  summarise(mean(Moral_Choices))
+
+#choosing coworker_v_friend in the dataframe
+
+comparison2_data <- mc_anova_data %>%
+  filter(Target != "child_moral_v_comp")
+
+#running test
+
+coworker_v_friend_c <- t.test(Moral_Choices ~ Target,
+                      alternative = "two.sided",
+                      paired = TRUE,
+                      data = comparison2_data)
+
+coworker_v_friend_c
+
+#mean check
+
+comparison2_data %>%
+  group_by(Target) %>%
+  summarise(mean(Moral_Choices))
 
 ```
 
+As expected, it seems that people chose competence traits over moral ones ***more often*** for coworkers than children, t(92) = 14.69, p \< .001, and than friends, t(92) = -20.96, p \< .001. Let's see if this is also the case for sociable traits.
 
+```{r moral-v-sociability-ttests}
+
+#choosing coworker v child in the data
+
+comparison3_data <- ms_anova_data %>%
+  filter(Target != "friend_moral_v_soc")
+
+#running test
+
+coworker_v_child_s <- t.test(Moral_Choices ~ Target,
+                      alternative = "two.sided",
+                      paired = TRUE,
+                      data = comparison3_data)
+
+coworker_v_child_s
+
+#mean check
+
+comparison3_data %>%
+  group_by(Target) %>%
+  summarise(mean(Moral_Choices))
+
+#choosing coworker_v_friend in the dataframe
+
+comparison4_data <- ms_anova_data %>%
+  filter(Target != "child_moral_v_soc")
+
+#running test
+
+coworker_v_friend_s <- t.test(Moral_Choices ~ Target,
+                      alternative = "two.sided",
+                      paired = TRUE,
+                      data = comparison4_data)
+
+coworker_v_friend_s
+
+#mean check
+
+comparison4_data %>%
+  group_by(Target) %>%
+  summarise(mean(Moral_Choices))
+
+```
+
+Participants chose sociable traits over moral traits ***less*** often for coworkers than they did for friends, t(93) = 3.17, p = .002. And there was ***no difference*** in the frequency with which participants selected moral traits over sociable traits for their ideal child and ideal coworker, t(93) = -1.04, p = .30. These findings go against the idea that sociability trait selections are what is driving the difference in moral trait preferences for coworkers vs. children/friends.
+
+Broadly speaking, these results explain findings from my past portfolio showing that people generally preferred moral traits more in friends and children than they did in coworkers. That is, this effect is due to people choosing competence traits over moral traits more often for their ideal coworker than for their ideal friend or child -- and NOT because they are choosing sociable traits over moral traits more often for coworkers.
+
+I was going to do more on this topic, but I actually think these results answer this question pretty soundly. Let's move on to a different question.
+
+### Are There Individual Differences in the Extent to Which Participants Preferred Moral Traits in their Ideal Targets?
+
+To answer this question, I am going to run some correlations to see whether people who preferred moral traits for some targets tended to prefer them for other targets. 
+
+I would like to run latent profile analysis to see whether there are profiles of responses that go together, but I don't know how to do that and don't have time to learn. So correlations will have to do.
+
+```{r overall-morality-correlations}
+
+
+
+```
